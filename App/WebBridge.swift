@@ -38,11 +38,16 @@ struct Schema: Decodable {
 /// Web（window.ARClock）との窓口。一覧を受け取り、押す・動かすを伝える
 final class WebBridge: NSObject, ObservableObject, WKScriptMessageHandler {
     static let name = "arclock"
+    static let hapticName = "haptic"
 
     @Published var schema: Schema?
     weak var webView: WKWebView?
 
     func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
+        if message.name == WebBridge.hapticName {
+            Haptics.play(message.body as? String ?? "tap")
+            return
+        }
         guard let text = message.body as? String, let data = text.data(using: .utf8) else { return }
         if let decoded = try? JSONDecoder().decode(Schema.self, from: data) {
             schema = decoded

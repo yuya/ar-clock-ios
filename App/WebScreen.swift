@@ -19,6 +19,7 @@ struct WebScreen: UIViewRepresentable {
         let location = context.coordinator.location
         config.userContentController.add(location, name: LocationBridge.name)
         config.userContentController.add(bridge, name: WebBridge.name)
+        config.userContentController.add(bridge, name: WebBridge.hapticName)
         config.userContentController.addUserScript(
             WKUserScript(source: LocationBridge.script, injectionTime: .atDocumentStart, forMainFrameOnly: true)
         )

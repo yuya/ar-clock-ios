@@ -13,7 +13,7 @@ struct RootView: View {
                 .ignoresSafeArea()
 
             if bridge.schema?.running == true {
-                Button { showSettings = true } label: {
+                Button { Haptics.tap(); showSettings = true } label: {
                     Image(systemName: "gearshape.fill")
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundStyle(.white)

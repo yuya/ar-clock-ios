@@ -20,7 +20,7 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(bridge.schema?.close ?? "Close") { dismiss() }
+                    Button(bridge.schema?.close ?? "Close") { Haptics.tap(); dismiss() }
                 }
             }
         }
@@ -62,7 +62,7 @@ private struct ItemView: View {
                 : [GridItem(.adaptive(minimum: 104), spacing: 8)]
             LazyVGrid(columns: columns, alignment: .leading, spacing: 8) {
                 ForEach(item.buttons ?? []) { b in
-                    Button { bridge.tap(b.id) } label: {
+                    Button { Haptics.tap(); bridge.tap(b.id) } label: {
                         Text(b.label)
                             .font(.subheadline.weight(.semibold))
                             .lineLimit(1)
@@ -107,6 +107,9 @@ private struct SliderRow: View {
                 value: Binding(
                     get: { local ?? item.value ?? lo },
                     set: { v in
+                        // 目盛り10等分をまたぐたびに、小さく刻む
+                        let before = Int(((local ?? item.value ?? lo) - lo) / (hi - lo) * 10)
+                        if Int((v - lo) / (hi - lo) * 10) != before { Haptics.select() }
                         local = v
                         if let id = item.id { bridge.slide(id, v) }
                     }
