@@ -1,0 +1,40 @@
+name: Build
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      web_ref:
+        description: 取り込む ar-clock の版（ブランチ・タグ・コミット）
+        default: main
+  repository_dispatch:
+    types: [web-updated]      # ar-clock 側の更新を合図にビルドする（設定は README）
+  schedule:
+    - cron: "17 18 * * *"     # 合図がなくても1日1回、最新の Web で作り直す
+
+jobs:
+  simulator:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Web アプリを取り込む
+        run: scripts/sync-web.sh "${{ github.event.inputs.web_ref || github.event.client_payload.ref || 'main' }}"
+      - name: Xcode プロジェクトを生成
+        run: |
+          brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
+          xcodegen generate
+      - name: シミュレータ向けにビルド
+        run: |
+          set -o pipefail
+          xcodebuild -project ARClock.xcodeproj -scheme ARClock -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO build | tail -n 60
+      - name: できたアプリをまとめる
+        run: |
+          cd build/Build/Products/Debug-iphonesimulator
+          ls -la ARClock.app ARClock.app/Web
+          zip -qr "$GITHUB_WORKSPACE/ARClock-simulator.zip" ARClock.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ARClock-simulator
+          path: ARClock-simulator.zip

@@ -1,0 +1,45 @@
+# Xcode プロジェクトの定義（XcodeGen）。.xcodeproj はコミットせず、ここから毎回生成する
+name: ARClock
+options:
+  bundleIdPrefix: com.yuya
+  deploymentTarget:
+    iOS: "16.0"
+targets:
+  ARClock:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+      - path: Web            # scripts/sync-web.sh が ar-clock から取り込む Web アプリ一式
+        type: folder
+        buildPhase: resources
+    info:
+      path: Support/Info.plist
+      properties:
+        CFBundleDisplayName: AR Clock
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        UILaunchScreen: {}
+        UIStatusBarHidden: true
+        UIViewControllerBasedStatusBarAppearance: true
+        UIRequiresFullScreen: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        NSCameraUsageDescription: 目の前の景色にフィルタをかけて表示するためにカメラを使います。映像は端末の外へ送りません。
+        NSLocationWhenInUseUsageDescription: 画面に都道府県名（海外では国名）を表示するために現在地を使います。
+        ITSAppUsesNonExemptEncryption: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.yuya.arclock
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        GENERATE_INFOPLIST_FILE: NO

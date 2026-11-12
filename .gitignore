@@ -1,0 +1,7 @@
+Web/
+.web-src/
+build/
+*.xcodeproj
+Support/Info.plist
+DerivedData/
+.DS_Store
