@@ -11,8 +11,7 @@ struct ARClockApp: App {
 
     var body: some Scene {
         WindowGroup {
-            WebScreen()
-                .ignoresSafeArea()
+            RootView()
                 .statusBarHidden(true)
                 .persistentSystemOverlays(.hidden)
                 .background(Color.black)

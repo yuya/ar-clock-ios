@@ -3,7 +3,10 @@ import WebKit
 
 /// Web アプリ（ar-clock）をそのまま全画面で動かす入れ物
 struct WebScreen: UIViewRepresentable {
-    func makeCoordinator() -> Coordinator { Coordinator() }
+    let bridge: WebBridge
+    var autostart = false
+
+    func makeCoordinator() -> Coordinator { Coordinator(bridge: bridge, autostart: autostart) }
 
     func makeUIView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
@@ -15,12 +18,14 @@ struct WebScreen: UIViewRepresentable {
 
         let location = context.coordinator.location
         config.userContentController.add(location, name: LocationBridge.name)
+        config.userContentController.add(bridge, name: WebBridge.name)
         config.userContentController.addUserScript(
             WKUserScript(source: LocationBridge.script, injectionTime: .atDocumentStart, forMainFrameOnly: true)
         )
 
         let view = WKWebView(frame: .zero, configuration: config)
         location.webView = view
+        bridge.webView = view
         view.uiDelegate = context.coordinator
         view.navigationDelegate = context.coordinator
         view.isOpaque = false
@@ -39,6 +44,19 @@ struct WebScreen: UIViewRepresentable {
 
     final class Coordinator: NSObject, WKUIDelegate, WKNavigationDelegate {
         let location = LocationBridge()
+        let bridge: WebBridge
+        let autostart: Bool
+
+        init(bridge: WebBridge, autostart: Bool) {
+            self.bridge = bridge
+            self.autostart = autostart
+        }
+
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            if autostart {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [bridge] in bridge.autostart() }
+            }
+        }
 
         /// カメラの許可は iOS の確認（初回の1回）に任せ、WebView 独自の確認は出さない
         func webView(_ webView: WKWebView,
