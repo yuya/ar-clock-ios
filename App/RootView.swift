@@ -13,20 +13,16 @@ struct RootView: View {
                 .ignoresSafeArea()
 
             if bridge.schema?.running == true {
-                Button { Haptics.tap(); showSettings = true } label: {
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .frame(width: 44, height: 44)
-                        .background(.ultraThinMaterial, in: Circle())
-                }
-                .padding(.trailing, 16)
-                .padding(.top, 8)
-                .accessibilityLabel(bridge.schema?.title ?? "Settings")
+                GearButton(
+                    label: bridge.schema?.title ?? "Settings",
+                    dimmed: bridge.dimmed && !showSettings,
+                    onTap: { Haptics.tap(); showSettings = true },
+                    onTouch: { bridge.wake() }
+                )
             }
         }
         .background(Color.black)
-        .sheet(isPresented: $showSettings) {
+        .sheet(isPresented: $showSettings, onDismiss: { bridge.wake() }) {
             SettingsView(bridge: bridge)
         }
         .onAppear {

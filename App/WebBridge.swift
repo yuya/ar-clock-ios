@@ -39,11 +39,19 @@ struct Schema: Decodable {
 final class WebBridge: NSObject, ObservableObject, WKScriptMessageHandler {
     static let name = "arclock"
     static let hapticName = "haptic"
+    static let uiName = "ui"
 
     @Published var schema: Schema?
+    /// しばらく触れていないので設定ボタンを薄くする
+    @Published var dimmed = false
     weak var webView: WKWebView?
 
     func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
+        if message.name == WebBridge.uiName {
+            let m = message.body as? String ?? ""
+            if m == "dim" { dimmed = true } else if m == "wake" { dimmed = false }
+            return
+        }
         if message.name == WebBridge.hapticName {
             Haptics.play(message.body as? String ?? "tap")
             return
@@ -60,6 +68,12 @@ final class WebBridge: NSObject, ObservableObject, WKScriptMessageHandler {
 
     func slide(_ id: String, _ value: Double) {
         run("window.ARClock && window.ARClock.slide(\(quoted(id)), \(value));")
+    }
+
+    /// 設定ボタンに触れた：薄くなるまでの時間を数え直す
+    func wake() {
+        dimmed = false
+        run("window.ARClock && window.ARClock.wake && window.ARClock.wake();")
     }
 
     /// 自動確認用：最初の画面をサンプル映像で通す
