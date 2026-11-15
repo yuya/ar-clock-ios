@@ -16,7 +16,7 @@ targets:
     info:
       path: Support/Info.plist
       properties:
-        CFBundleDisplayName: AR Clock
+        CFBundleDisplayName: AR CLOCK
         CFBundleShortVersionString: "$(MARKETING_VERSION)"
         CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         UILaunchScreen: {}

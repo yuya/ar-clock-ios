@@ -4,6 +4,7 @@ import SwiftUI
 struct RootView: View {
     @StateObject private var bridge = WebBridge()
     @State private var showSettings = false
+    @AppStorage("menuPos") private var gearCorner = "tr"
 
     private var args: [String] { ProcessInfo.processInfo.arguments }
 
@@ -19,6 +20,27 @@ struct RootView: View {
                     onTap: { Haptics.tap(); showSettings = true },
                     onTouch: { bridge.wake() }
                 )
+            }
+
+            // 左下：前面・背面カメラの切り替え（カメラを映しているときだけ）
+            if bridge.schema?.running == true, bridge.schema?.camera != nil {
+                Button {
+                    Haptics.tap(); bridge.wake(); bridge.flip()
+                } label: {
+                    Image(systemName: "arrow.triangle.2.circlepath.camera.fill")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .frame(width: 44, height: 44)
+                        .background(.ultraThinMaterial, in: Circle())
+                        .opacity(bridge.dimmed && !showSettings ? 0.4 : 1)
+                        .contentShape(Circle().inset(by: -8))
+                }
+                .buttonStyle(.plain)
+                .animation(.easeOut(duration: 0.4), value: bridge.dimmed)
+                .padding(.leading, gearCorner == "bl" ? 16 + 54 : 16)
+                .padding(.bottom, 8)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                .accessibilityLabel("Switch camera")
             }
         }
         .background(Color.black)

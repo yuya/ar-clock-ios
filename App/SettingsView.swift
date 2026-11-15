@@ -65,9 +65,11 @@ private struct ItemView: View {
                     Button { Haptics.tap(); bridge.tap(b.id) } label: {
                         Text(b.label)
                             .font(.subheadline.weight(.semibold))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.7)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.center)
+                            .minimumScaleFactor(0.8)
                             .padding(.horizontal, 8)
+                            .padding(.vertical, 6)
                             .frame(maxWidth: .infinity, minHeight: 44)
                     }
                     .foregroundStyle(b.on ? Color.black : Color.white)

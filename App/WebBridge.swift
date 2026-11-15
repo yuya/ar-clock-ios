@@ -4,6 +4,7 @@ import WebKit
 /// Web 側が渡してくる「設定の一覧」。設定パネルの中身をそのまま写したもの
 struct Schema: Decodable {
     let running: Bool
+    let camera: String?          // user / environment（カメラを映していないときは nil）
     let title: String
     let close: String
     let groups: [Group]
@@ -60,6 +61,11 @@ final class WebBridge: NSObject, ObservableObject, WKScriptMessageHandler {
         if let decoded = try? JSONDecoder().decode(Schema.self, from: data) {
             schema = decoded
         }
+    }
+
+    /// 前面・背面カメラの切り替え
+    func flip() {
+        run("window.ARClock && window.ARClock.flip && window.ARClock.flip();")
     }
 
     func tap(_ id: String) {
