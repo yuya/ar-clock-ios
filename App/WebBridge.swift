@@ -63,11 +63,6 @@ final class WebBridge: NSObject, ObservableObject, WKScriptMessageHandler {
         }
     }
 
-    /// 前面・背面カメラの切り替え
-    func flip() {
-        run("window.ARClock && window.ARClock.flip && window.ARClock.flip();")
-    }
-
     func tap(_ id: String) {
         run("window.ARClock && window.ARClock.tap(\(quoted(id)));")
     }
