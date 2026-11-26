@@ -29,8 +29,9 @@ struct GearButton: View {
                 .frame(width: 44, height: 44)
                 .background(.ultraThinMaterial, in: Circle())
                 .scaleEffect(pressed ? 1.12 : 1)
-                .opacity(dimmed && !pressed ? 0.4 : 1)
+                .opacity(dimmed && !pressed ? 0 : 1)   // 放っておくと消える。画面をタップすると Web から wake が来て戻る
                 .contentShape(Circle().inset(by: -12))   // 指が少しずれても拾う
+                .allowsHitTesting(!dimmed)   // 消えている間のタップは Web に通して、まず表示を戻す
                 .offset(drag)
                 .gesture(
                     DragGesture(minimumDistance: 0, coordinateSpace: .local)
