@@ -15,7 +15,7 @@ else
   SRC=".web-src"; VER="$(git -C .web-src rev-parse --short HEAD)"
 fi
 cp "$SRC/index.html" Web/
-for f in "$SRC"/*.mp4 "$SRC"/*.mp3 "$SRC"/*.png "$SRC"/*.jpg "$SRC"/*.svg "$SRC"/*.js "$SRC"/*.css; do [ -e "$f" ] && cp "$f" Web/; done
+for f in "$SRC"/*.mp4 "$SRC"/*.mp3 "$SRC"/*.png "$SRC"/*.jpg "$SRC"/*.webp "$SRC"/*.svg "$SRC"/*.js "$SRC"/*.css; do [ -e "$f" ] && cp "$f" Web/; done
 echo "$VER" > Web/VERSION
 rm -rf .web-src
 echo "Web/ <- ar-clock@$VER"; ls -la Web
